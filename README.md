@@ -21,5 +21,15 @@ Các chức năng đã có:
 
 -Resize (điều chỉnh kích thước ảnh)
 
+** trong phần testfunc là code làm nổi viền của các đối tượng trong ảnh**
+
+Từ ảnh như này:
+
+![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/testpattern.bmp)
+
+Thành ảnh như này: 
+
+![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/out.bmp)
+
 Khi đọc code nếu có gì thắc mắc vui lòng liên hệ Việt.
 
