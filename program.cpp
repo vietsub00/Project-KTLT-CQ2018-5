@@ -13,9 +13,11 @@ int main()
 		
 		//Bightness(bmp, 50);
 		provideBM(bmp1, bmp.height, bmp.width);
+
+		Brightness(bmp, 50);
 		TestFunc(bmp,bmp1);
-		somethingelsethatidontknow(bmp1,3);
 		BnW(bmp1);
+		somethingelsethatidontknow(bmp1,3);
 		//TestFunc(bmp1, bmp);
 		//somethingelsethatidontknow(bmp1,3);
 		//Reverse(bmp);
