@@ -38,6 +38,7 @@ void Contrast(const Bitmap &bmp, double contrast);
 void Resize(const Bitmap &bmpin, Bitmap &bmpout, int width, int height);
 void Blur(const Bitmap &bmp, int factor);
 void somethingelsethatidontknow(const Bitmap &bmp, int factor);
+void Hist(const Bitmap &bmp);
 void TestFunc(const Bitmap &bmp,Bitmap &bmpout);
 
 #endif
