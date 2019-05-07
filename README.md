@@ -21,6 +21,8 @@ Các chức năng đã có:
 
 -Resize (điều chỉnh kích thước ảnh)
 
+-Histogram (xác suất xuất hiện của từng màu R/G/B trong ảnh)
+
 ** trong phần testfunc là code làm nổi viền của các đối tượng trong ảnh**
 
 Từ ảnh như này:
@@ -30,6 +32,10 @@ Từ ảnh như này:
 Thành ảnh như này: 
 
 ![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/out.bmp)
+
+**vừa update thêm hàm xuất histogram của hình ảnh**
+
+Histogram của hình ảnh trông như này: -> ![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/histogram.bmp)
 
 Khi đọc code nếu có gì thắc mắc vui lòng liên hệ Việt.
 
