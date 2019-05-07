@@ -246,6 +246,76 @@ void Blur(const Bitmap &bmp, int factor)
 			}
 }
 
+//export image's histogram
+void Hist(const Bitmap &bmp)
+{
+	int** hist;
+	hist = new int*[3];
+	for (register int i = 0; i < 3; i++) hist[i] = (int *)calloc(256, sizeof(int));
+
+	for (register int row = 0; row < bmp.height; row++)
+		for (register int col = 0; col < bmp.width; col++)
+		{
+			Color color;
+			GetPixel(bmp, row, col, color);
+
+			hist[0][color.R]++;
+			hist[1][color.G]++;
+			hist[2][color.B]++;
+		}
+
+		//xac dinh height
+
+		unsigned int Max = 0;
+		for (register int i = 0; i < 256; i++)
+		{
+			if (Max < hist[0][i])Max = hist[0][i];
+			if (Max < hist[1][i])Max = hist[1][i];
+			if (Max < hist[2][i])Max = hist[2][i];
+		}
+		//chuyen doi do dai sang phan tram
+		for (register int i = 0; i < 256; i++)
+		{
+			hist[0][i] = hist[0][i] * 200 / Max;
+			hist[1][i] = hist[1][i] * 200 / Max;
+			hist[2][i] = hist[2][i] * 200 / Max;
+		}
+		
+		cout << Max << endl;
+		
+		Bitmap histogram;
+		provideBM(histogram, 210, 256);
+
+		for (register int row = 0; row < histogram.height; row++)
+			for (register int col = 0; col < histogram.width; col++)
+			{
+				Color color;
+				color.R=0;
+				color.G=0;
+				color.B=0;
+				
+				if (row <= hist[0][col]) color.R = 255;
+				if (row <= hist[1][col]) color.G = 255;
+				if (row <= hist[2][col]) color.B = 255;
+				
+				SetPixel(histogram, histogram.height - 1 - row, histogram.width - 1 - col, color);
+			}
+			
+		//luu hinh anh
+			if (SaveBitmap("histogram.bmp", histogram))
+			{
+			}
+			else
+				printf("Can not save the bitmap file!!!\n");
+
+			//giai phóng bộ nhớ
+			DisposeBitmap(histogram);
+			
+			for (register int i = 0; i < 3; i++) delete[] hist[i];
+			delete[] hist;
+
+}
+
 //ham kiem thu
 void TestFunc(const Bitmap &bmp,Bitmap &bmpout)
 {
