@@ -57,13 +57,12 @@ void Enlarge(const Bitmap &inbmp, Bitmap &outbmp)
 void Contrast(const Bitmap &bmp, double contrast)
 {
 	//contrast = contrast * 255.0 / 10.0;
+	double factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
 	for (register int row = 0; row < bmp.height; row++)
 		for (register int col = 0; col < bmp.width; col++)
 		{
 			Color color;
 			GetPixel(bmp, row, col, color);
-			
-			double factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
 
 			color.R = Truncate(factor*(color.R - 128) + 128);
 
@@ -93,6 +92,7 @@ void Brightness(const Bitmap &bmp, double factor)
 			SetPixel(bmp, row, col, color);
 		}
 }
+
 /*
 void Rotate(){}
 
@@ -108,7 +108,7 @@ void FlipHori(const Bitmap &bmp)
 			Color color1, color2;
 
 			GetPixel(bmp, row, col, color1);
-			GetPixel(bmp, bmp.height - 1 - row , col, color2);
+			GetPixel(bmp, bmp.height - 1 - row, col, color2);
 
 			swap(color1, color2);
 
@@ -125,7 +125,7 @@ void FlipVert(const Bitmap &bmp)
 		{
 			Color color1, color2;
 			GetPixel(bmp, row, col, color1);
-			GetPixel(bmp, row, bmp.width - 1 -col, color2);
+			GetPixel(bmp, row, bmp.width - 1 - col, color2);
 			swap(color1, color2);
 			SetPixel(bmp, row, col, color1);
 			SetPixel(bmp, row, bmp.width - 1 - col, color2);
@@ -153,21 +153,138 @@ void Saturation(const Bitmap &bmp, double factor)
 }
 
 //
-void somethingelsethatidontknow(const Bitmap &bmp,int factor)
+void somethingelsethatidontknow(const Bitmap &bmp,int multifactor,int factor)
 {
 	for (int row = 1; row < bmp.height - 1; row++)
 	for (int col = 1; col < bmp.width - 1; col++)
 	{
 		Color color;
 		GetPixel(bmp, row, col, color);
+		if (color.R > factor || color.B > factor || color.G > factor)
+		{
+			color.R = Truncate(color.R*multifactor);
+			color.G = Truncate(color.G*multifactor);
+			color.B = Truncate(color.B*multifactor);
+			SetPixel(bmp, row, col, color);
+		}
+		else
+		{
+			color.R = 0;
+			color.G = 0;
+			color.B = 0;
 
-		color.R = Truncate(color.R*factor);
-		color.G = Truncate(color.G*factor);
-		color.B = Truncate(color.B*factor);
-
-		SetPixel(bmp, row, col, color);
+			SetPixel(bmp, row, col, color);
+		}
 	}
 
+}
+
+//export image's histogram
+void Hist(const Bitmap &bmp)
+{
+	int** hist;
+	hist = new int*[3];
+	for (register int i = 0; i < 3; i++) hist[i] = (int *)calloc(256, sizeof(int));
+
+	for (register int row = 0; row < bmp.height; row++)
+		for (register int col = 0; col < bmp.width; col++)
+		{
+			Color color;
+			GetPixel(bmp, row, col, color);
+
+			hist[0][color.R]++;
+			hist[1][color.G]++;
+			hist[2][color.B]++;
+		}
+
+		//xac dinh height
+
+		unsigned int Max = 0;
+		for (register int i = 0; i < 256; i++)
+		{
+			if (Max < hist[0][i])Max = hist[0][i];
+			if (Max < hist[1][i])Max = hist[1][i];
+			if (Max < hist[2][i])Max = hist[2][i];
+		}
+
+		for (register int i = 0; i < 256; i++)
+		{
+			hist[0][i] = hist[0][i] * 200 / Max;
+			hist[1][i] = hist[1][i] * 200 / Max;
+			hist[2][i] = hist[2][i] * 200 / Max;
+		}
+		
+		cout << Max << endl;
+		
+		Bitmap histogram;
+		provideBM(histogram, 210, 256);
+
+		for (register int row = 0; row < histogram.height; row++)
+			for (register int col = 0; col < histogram.width; col++)
+			{
+				Color color;
+				color.R=0;
+				color.G=0;
+				color.B=0;
+				
+				if (row <= hist[0][col]) color.R = 255;
+				if (row <= hist[1][col]) color.G = 255;
+				if (row <= hist[2][col]) color.B = 255;
+				
+				SetPixel(histogram, histogram.height - 1 - row, histogram.width - 1 - col, color);
+			}
+			
+		//luu hinh anh
+			if (SaveBitmap("histogram.bmp", histogram))
+			{
+			}
+			else
+				printf("Can not save the bitmap file!!!\n");
+
+			//giai phóng bộ nhớ
+			DisposeBitmap(histogram);
+			
+			for (register int i = 0; i < 3; i++) delete[] hist[i];
+			delete[] hist;
+
+}
+
+//tach kenh R/G/B
+void RGBSplit(const Bitmap &bmp)
+{
+	Bitmap BMR, BMG, BMB;
+	provideBM(BMR, bmp.height, bmp.width);
+	provideBM(BMG, bmp.height, bmp.width);
+	provideBM(BMB, bmp.height, bmp.width);
+
+	for (register int row = 0; row < bmp.height; row++)
+		for (register int col = 0; col < bmp.width; col++)
+		{
+			Color R, G, B, color;
+			GetPixel(bmp, row, col, color);
+
+			R.R = color.R;
+			R.G = color.R;
+			R.B = color.R;
+
+			G.R = color.G;
+			G.G = color.G;
+			G.B = color.G;
+
+			B.R = color.B;
+			B.G = color.B;
+			B.B = color.B;
+
+			SetPixel(BMR, row, col, R);
+			SetPixel(BMG, row, col, G);
+			SetPixel(BMB, row, col, B);
+		}
+		SaveBitmap("R.bmp", BMR);
+		SaveBitmap("G.bmp", BMG);
+		SaveBitmap("B.bmp", BMB);
+		DisposeBitmap(BMR);
+		DisposeBitmap(BMG);
+		DisposeBitmap(BMB);
 }
 
 //xuat anh trang den
@@ -224,96 +341,31 @@ void Resize(const Bitmap &bmpin, Bitmap &bmpout, int width, int height)
 	}
 }
 
-//lam mo (max = 20)
-void Blur(const Bitmap &bmp, int factor)
+//lam mo
+void Blur(const Bitmap &bmp, Bitmap &bmpout)
 {
-	for (register int i = 0; i < factor; i++)
-		for (register int row = 1; row < bmp.height - 1; row++)
-			for (register int col = 1; col < bmp.width - 1; col++)
-			{
-				Color color, color1, color2, color3, color4;
-
-				GetPixel(bmp, row - 1, col, color1);
-				GetPixel(bmp, row + 1, col, color2);
-				GetPixel(bmp, row, col - 1, color3);
-				GetPixel(bmp, row, col + 1, color4);
-
-				color.R = (color1.R + color2.R + color3.R + color4.R) / 4;
-				color.G = (color1.G + color2.G + color3.G + color4.G) / 4;
-				color.B = (color1.B + color2.B + color3.B + color4.B) / 4;
-
-				SetPixel(bmp, row, col, color);
-			}
-}
-
-//export image's histogram
-void Hist(const Bitmap &bmp)
-{
-	int** hist;
-	hist = new int*[3];
-	for (register int i = 0; i < 3; i++) hist[i] = (int *)calloc(256, sizeof(int));
-
-	for (register int row = 0; row < bmp.height; row++)
-		for (register int col = 0; col < bmp.width; col++)
-		{
-			Color color;
-			GetPixel(bmp, row, col, color);
-
-			hist[0][color.R]++;
-			hist[1][color.G]++;
-			hist[2][color.B]++;
-		}
-
-		//xac dinh height
-
-		unsigned int Max = 0;
-		for (register int i = 0; i < 256; i++)
-		{
-			if (Max < hist[0][i])Max = hist[0][i];
-			if (Max < hist[1][i])Max = hist[1][i];
-			if (Max < hist[2][i])Max = hist[2][i];
-		}
-		//chuyen doi do dai sang phan tram
-		for (register int i = 0; i < 256; i++)
-		{
-			hist[0][i] = hist[0][i] * 200 / Max;
-			hist[1][i] = hist[1][i] * 200 / Max;
-			hist[2][i] = hist[2][i] * 200 / Max;
-		}
-		
-		cout << Max << endl;
-		
-		Bitmap histogram;
-		provideBM(histogram, 210, 256);
-
-		for (register int row = 0; row < histogram.height; row++)
-			for (register int col = 0; col < histogram.width; col++)
+		for (register int row = 0; row < bmp.height; row++)
+			for (register int col = 0; col < bmp.width; col++)
 			{
 				Color color;
-				color.R=0;
-				color.G=0;
-				color.B=0;
-				
-				if (row <= hist[0][col]) color.R = 255;
-				if (row <= hist[1][col]) color.G = 255;
-				if (row <= hist[2][col]) color.B = 255;
-				
-				SetPixel(histogram, histogram.height - 1 - row, histogram.width - 1 - col, color);
-			}
-			
-		//luu hinh anh
-			if (SaveBitmap("histogram.bmp", histogram))
-			{
-			}
-			else
-				printf("Can not save the bitmap file!!!\n");
+				if (row == 0 || col == 0 || row == bmp.height - 1 || col == bmp.width - 1)
+					GetPixel(bmp, row, col, color);
+				else
+				{
+					Color color1, color2, color3, color4;
 
-			//giai phóng bộ nhớ
-			DisposeBitmap(histogram);
-			
-			for (register int i = 0; i < 3; i++) delete[] hist[i];
-			delete[] hist;
+					GetPixel(bmp, row - 1, col, color1);
+					GetPixel(bmp, row + 1, col, color2);
+					GetPixel(bmp, row, col - 1, color3);
+					GetPixel(bmp, row, col + 1, color4);
 
+					color.R = (color1.R + color2.R + color3.R + color4.R) / 4;
+					color.G = (color1.G + color2.G + color3.G + color4.G) / 4;
+					color.B = (color1.B + color2.B + color3.B + color4.B) / 4;
+				}
+					
+				SetPixel(bmpout, row, col, color);
+			}
 }
 
 //ham kiem thu
@@ -322,17 +374,21 @@ void TestFunc(const Bitmap &bmp,Bitmap &bmpout)
 	for (int row = 1; row < bmp.height-1; row++)
 		for (int col = 1; col < bmp.width-1; col++)
 		{
-			Color color,color1,color2,color3,color4;
-
-			GetPixel(bmp, row-1, col, color1);
-			GetPixel(bmp, row+1, col, color2);
-			GetPixel(bmp, row, col-1, color3);
-			GetPixel(bmp, row, col+1, color4);
+			Color color,color0;
 			GetPixel(bmp, row, col, color);
-
-			color.R = Truncate((color1.R + color2.R + color3.R + color4.R) / 4 - color.R);
-			color.G = Truncate((color1.G + color2.G + color3.G + color4.G) / 4 - color.G);
-			color.B = Truncate((color1.B + color2.B + color3.B + color4.B) / 4 - color.B);
+			int avgR=0, avgG=0, avgB=0;
+			for (register int m = -1; m < 2; m++)
+				for (register int n = -2; n < 2; n++)
+				{
+					GetPixel(bmp, row-m, col-n, color0);
+					avgR += color0.R;
+					avgG += color0.G;
+					avgB += color0.B;
+				}
+			
+				color.R = Truncate(avgR / 121 - color.R);
+				color.G = Truncate(avgG / 121 - color.G);
+				color.B = Truncate(avgB / 121 - color.B);
 			//int vector = (int)sqrt(pow(R - color.R, 2) + pow(G - color.G, 2) + pow(B - color.B, 2));
 			SetPixel(bmpout, row, col, color);
 		}
