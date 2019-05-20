@@ -108,12 +108,12 @@ void FlipHori(const Bitmap &bmp)
 			Color color1, color2;
 
 			GetPixel(bmp, row, col, color1);
-			GetPixel(bmp, bmp.height - row , col, color2);
+			GetPixel(bmp, bmp.height - 1 - row , col, color2);
 
 			swap(color1, color2);
 
 			SetPixel(bmp, row, col, color1);
-			SetPixel(bmp, bmp.height - row, col, color2);
+			SetPixel(bmp, bmp.height - 1 - row, col, color2);
 		}
 }
 
@@ -125,10 +125,10 @@ void FlipVert(const Bitmap &bmp)
 		{
 			Color color1, color2;
 			GetPixel(bmp, row, col, color1);
-			GetPixel(bmp, row, bmp.width-col, color2);
+			GetPixel(bmp, row, bmp.width - 1 -col, color2);
 			swap(color1, color2);
 			SetPixel(bmp, row, col, color1);
-			SetPixel(bmp, row, bmp.width - col, color2);
+			SetPixel(bmp, row, bmp.width - 1 - col, color2);
 		}
 }
 
