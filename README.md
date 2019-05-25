@@ -23,19 +23,12 @@ Các chức năng đã có:
 
 -Histogram (xác suất xuất hiện của từng màu R/G/B trong ảnh)
 
-** trong phần testfunc là code làm nổi viền của các đối tượng trong ảnh**
+-EdgeDetect (tách viền của vật thể trong ảnh)
 
-Từ ảnh như này:
+-Hist (xuất histogram của hình ảnh)
 
-![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/testpattern.bmp)
-
-Thành ảnh như này: 
-
-![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/out.bmp)
-
-**vừa update thêm hàm xuất histogram của hình ảnh**
-
-Histogram của hình ảnh trông như này: -> ![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/histogram.bmp)
+Histogram của hình ảnh là sơ đồ phân bối cường độ của mỗi màu trong ảnh, histogram trông như này: -> ![alt text](https://raw.githubusercontent.com/vietsub00/Project-KTLT-CQ2018-5/master/histogram.bmp)
+(Nên google để hiểu hơn về histogram)
 
 Khi đọc code nếu có gì thắc mắc vui lòng liên hệ Việt.
 
