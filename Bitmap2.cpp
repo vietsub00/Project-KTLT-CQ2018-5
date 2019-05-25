@@ -109,6 +109,21 @@ void Rotate(const Bitmap &bmp, Bitmap &outbmp)
 			SetPixel(outbmp, col, outbmp.width - row - 1, color1);
 		}
 }
+
+//xoay anh sang phai
+void RotateR(const Bitmap &bmp, Bitmap &bmpout)
+{
+	//provideBM(bmpout, bmp.width, bmp.height);
+
+	for (register int row = 0; row < bmpout.height; row++)
+	for (register int col = 0; col < bmpout.width; col++)
+	{
+		Color color;
+		GetPixel(bmp, bmpout.width - col - 1, row, color);
+		SetPixel(bmpout, row, col, color);
+	}
+}
+
 /*
 
 void Hue(){}
