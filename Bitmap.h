@@ -30,6 +30,7 @@ int Truncate(int Value);
 void Hist(const Bitmap &bmp);
 void Enlarge(const Bitmap &inbmp, Bitmap &outbmp);
 void Brightness(const Bitmap &bmp, double factor);
+void Rotate(const Bitmap &bmp, Bitmap &bmpout);
 void BnW(const Bitmap &bmp);
 void Reverse(const Bitmap &bmp);
 void FlipVert(const Bitmap &bmp);
