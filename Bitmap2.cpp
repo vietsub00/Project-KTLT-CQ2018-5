@@ -152,33 +152,6 @@ void Saturation(const Bitmap &bmp, double factor)
 		}
 }
 
-//
-void somethingelsethatidontknow(const Bitmap &bmp,int multifactor,int factor)
-{
-	for (int row = 1; row < bmp.height - 1; row++)
-	for (int col = 1; col < bmp.width - 1; col++)
-	{
-		Color color;
-		GetPixel(bmp, row, col, color);
-		if (color.R > factor || color.B > factor || color.G > factor)
-		{
-			color.R = Truncate(color.R*multifactor);
-			color.G = Truncate(color.G*multifactor);
-			color.B = Truncate(color.B*multifactor);
-			SetPixel(bmp, row, col, color);
-		}
-		else
-		{
-			color.R = 0;
-			color.G = 0;
-			color.B = 0;
-
-			SetPixel(bmp, row, col, color);
-		}
-	}
-
-}
-
 //export image's histogram
 void Hist(const Bitmap &bmp)
 {
@@ -368,29 +341,44 @@ void Blur(const Bitmap &bmp, Bitmap &bmpout)
 			}
 }
 
-//ham kiem thu
-void TestFunc(const Bitmap &bmp,Bitmap &bmpout)
+void EdgeDetect(const Bitmap &bmp, Bitmap &bmpout)
 {
-	for (int row = 1; row < bmp.height-1; row++)
-		for (int col = 1; col < bmp.width-1; col++)
-		{
-			Color color,color0;
-			GetPixel(bmp, row, col, color);
-			int avgR=0, avgG=0, avgB=0;
-			for (register int m = -1; m < 2; m++)
-				for (register int n = -2; n < 2; n++)
-				{
-					GetPixel(bmp, row-m, col-n, color0);
-					avgR += color0.R;
-					avgG += color0.G;
-					avgB += color0.B;
-				}
-			
-				color.R = Truncate(avgR / 121 - color.R);
-				color.G = Truncate(avgG / 121 - color.G);
-				color.B = Truncate(avgB / 121 - color.B);
-			//int vector = (int)sqrt(pow(R - color.R, 2) + pow(G - color.G, 2) + pow(B - color.B, 2));
-			SetPixel(bmpout, row, col, color);
-		}
 
+	int KernelSobelX[9] ={
+		1, 0, -1,
+		2, 0, -2,
+		1, 0, -1
+	};
+
+	int KernelSobelY[9] ={
+		 1,  2,  1,
+		 0,  0,  0,
+		-1, -2, -1
+	};
+
+	for (int row = 1; row < bmp.height - 1; row++)
+		for (int col = 1; col < bmp.width - 1; col++)
+		{
+			Color color0;
+			int XR = 0, XG = 0, XB = 0, YR = 0, YG = 0, YB = 0;
+
+			for (register int m = -1; m <= 1; m++)
+				for (register int n = -1; n <= 1; n++)
+				{
+					Color color;
+					GetPixel(bmp, row + m, col + n , color);
+					XR += color.R * KernelSobelX[(m + 1) * 3 + (n + 1)];
+					XG += color.G * KernelSobelX[(m + 1) * 3 + (n + 1)];
+					XB += color.B * KernelSobelX[(m + 1) * 3 + (n + 1)];
+					YR += color.R * KernelSobelY[(m + 1) * 3 + (n + 1)];
+					YG += color.G * KernelSobelY[(m + 1) * 3 + (n + 1)];
+					YB += color.B * KernelSobelY[(m + 1) * 3 + (n + 1)];
+				}
+
+				color0.R = fabs((double)(XR + YR) / 2);
+				color0.G = fabs((double)(XG + YG) / 2);
+				color0.B = fabs((double)(XB + YB) / 2);
+
+				SetPixel(bmpout, row, col, color0);
+		}
 }
