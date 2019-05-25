@@ -93,8 +93,23 @@ void Brightness(const Bitmap &bmp, double factor)
 		}
 }
 
+//xoay anh
+void Rotate(const Bitmap &bmp, Bitmap &outbmp)
+{
+	outbmp.height = bmp.width;
+	outbmp.width = bmp.height;
+	outbmp.rowSize = ((3 * outbmp.width + 3) / 4) * 4;
+
+	outbmp.pixels = new unsigned char[outbmp.height * outbmp.rowSize];
+	for (register int row = 0; row < bmp.height; row++)
+		for (register int col = 0; col < bmp.width; col++)
+		{
+			Color color1, color2;
+			GetPixel(bmp, row, col, color1);
+			SetPixel(outbmp, col, outbmp.width - row - 1, color1);
+		}
+}
 /*
-void Rotate(){}
 
 void Hue(){}
 */
