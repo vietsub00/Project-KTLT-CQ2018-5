@@ -38,8 +38,7 @@ void Saturation(const Bitmap &bmp, double factor);
 void Contrast(const Bitmap &bmp, double contrast);
 void Resize(const Bitmap &bmpin, Bitmap &bmpout, int width, int height);
 void Blur(const Bitmap &bmp, Bitmap &bmpout);
-void somethingelsethatidontknow(const Bitmap &bmp,int multifactor, int factor);
 void RGBSplit(const Bitmap &bmp);
-void TestFunc(const Bitmap &bmp,Bitmap &bmpout);
+void EdgeDetect(const Bitmap &bmp, Bitmap &bmpout);
 
 #endif
